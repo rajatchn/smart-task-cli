@@ -1,0 +1,38 @@
+{
+  "tasks": [
+    {
+      "id": "1",
+      "title": "Prepare Q3 strategy review",
+      "dueDate": "2026-08-01",
+      "impact": "high",
+      "description": "Compile metrics and narrative for leadership review"
+    },
+    {
+      "id": "2",
+      "title": "1:1 with Anna",
+      "dueDate": "2026-07-28",
+      "impact": "medium",
+      "description": "Discuss performance and growth opportunities"
+    },
+    {
+      "id": "3",
+      "title": "Review support metrics dashboard",
+      "dueDate": "2026-07-30",
+      "impact": "high",
+      "description": "Check SLA compliance and identify trends"
+    },
+    {
+      "id": "4",
+      "title": "Email follow-up with prospective hire",
+      "impact": "medium",
+      "description": "Send interview feedback summary"
+    },
+    {
+      "id": "5",
+      "title": "Update project documentation",
+      "dueDate": "2026-08-15",
+      "impact": "low",
+      "description": "Add notes from recent architecture discussion"
+    }
+  ]
+}
