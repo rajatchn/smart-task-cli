@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from .task_loader import load_tasks, validate_task
 from .prioritizer import prioritize_tasks
+from .claude_analyzer import enrich_tasks_with_analysis, print_enriched_brief
 
 
 @click.group()
@@ -25,8 +26,13 @@ def cli():
     type=int,
     help="Number of top tasks to show (default: 3)",
 )
-def daily_brief(tasks_file: str, top: int):
-    """Show your top priority tasks for the day."""
+@click.option(
+    "--ai/--no-ai",
+    default=True,
+    help="Enable/disable Claude AI analysis (default: enabled)",
+)
+def daily_brief(tasks_file: str, top: int, ai: bool):
+    """Show your top priority tasks with optional AI insights."""
     try:
         tasks = load_tasks(tasks_file)
 
@@ -40,18 +46,25 @@ def daily_brief(tasks_file: str, top: int):
         # Prioritize
         prioritized = prioritize_tasks(valid_tasks)
 
-        # Display
-        click.echo(f"\n📋 Your Top {min(top, len(prioritized))} Tasks\n")
+        if ai:
+            click.echo("\n⏳ Analyzing tasks with Claude...\n")
+            # Enrich with Claude analysis
+            enriched = enrich_tasks_with_analysis(prioritized[:top])
+            # Display enriched brief
+            print_enriched_brief(enriched, top_n=top)
+        else:
+            # Display simple brief
+            click.echo(f"\n📋 Your Top {min(top, len(prioritized))} Tasks\n")
 
-        for i, task in enumerate(prioritized[:top], 1):
-            score = task.get("priority_score", 0)
-            due_date = task.get("dueDate", "No due date")
-            click.echo(f"{i}. {task['title']}")
-            click.echo(f"   Priority Score: {score:.1f}")
-            click.echo(f"   Due: {due_date}")
-            if task.get("description"):
-                click.echo(f"   Description: {task['description']}")
-            click.echo()
+            for i, task in enumerate(prioritized[:top], 1):
+                score = task.get("priority_score", 0)
+                due_date = task.get("dueDate", "No due date")
+                click.echo(f"{i}. {task['title']}")
+                click.echo(f"   Priority Score: {score:.1f}")
+                click.echo(f"   Due: {due_date}")
+                if task.get("description"):
+                    click.echo(f"   Description: {task['description']}")
+                click.echo()
 
     except FileNotFoundError:
         click.echo(f"Error: Task file '{tasks_file}' not found.", err=True)
