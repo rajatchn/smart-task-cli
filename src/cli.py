@@ -8,6 +8,7 @@ from .prioritizer import prioritize_tasks
 from .claude_analyzer import enrich_tasks_with_analysis, print_enriched_brief
 from .config import get_default_tasks_file, set_default_tasks_file
 from .task_manager import add_task, complete_task, remove_task
+from .email_sender import send_daily_brief_email
 
 
 @click.group()
@@ -192,6 +193,62 @@ def config_set(tasks_file: str):
     """Set the default tasks file location."""
     set_default_tasks_file(tasks_file)
     click.echo(f"✅ Default tasks file set to: {tasks_file}")
+
+
+@cli.command()
+@click.option(
+    "--email",
+    required=True,
+    help="Email address to send reminder to",
+)
+@click.option(
+    "--tasks-file",
+    default=None,
+    help="Path to tasks file (uses config default if not specified)",
+)
+@click.option(
+    "--ai/--no-ai",
+    default=True,
+    help="Include Claude AI analysis in email (default: enabled)",
+)
+def remind(email: str, tasks_file: str, ai: bool):
+    """Send your daily task brief via email."""
+    try:
+        # Use config default if tasks_file not specified
+        if tasks_file is None:
+            tasks_file = get_default_tasks_file()
+
+        tasks = load_tasks(tasks_file)
+
+        # Validate tasks
+        valid_tasks = [t for t in tasks if validate_task(t)]
+
+        if not valid_tasks:
+            click.echo("No valid tasks found.")
+            return
+
+        # Prioritize
+        prioritized = prioritize_tasks(valid_tasks)
+
+        # Take top 5 for email
+        top_tasks = prioritized[:5]
+
+        if ai:
+            click.echo("⏳ Enriching tasks with Claude analysis...")
+            top_tasks = enrich_tasks_with_analysis(top_tasks)
+
+        # Send email
+        if send_daily_brief_email(email, top_tasks):
+            click.echo(f"✅ Daily brief sent to {email}")
+        else:
+            click.echo("❌ Failed to send email", err=True)
+
+    except FileNotFoundError:
+        click.echo(f"Error: Task file '{tasks_file}' not found.", err=True)
+    except json.JSONDecodeError:
+        click.echo(f"Error: '{tasks_file}' is not valid JSON.", err=True)
+    except Exception as e:
+        click.echo(f"Error: {e}", err=True)
 
 
 if __name__ == "__main__":
