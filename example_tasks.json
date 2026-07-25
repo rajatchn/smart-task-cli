@@ -1,44 +1,39 @@
 {
   "tasks": [
     {
+      "id": "1",
+      "title": "File Income Tax",
+      "dueDate": "2026-08-15",
+      "impact": "high",
+      "description": "Complete and file annual income tax return"
+    },
+    {
       "id": "2",
-      "title": "1:1 with Anna",
-      "dueDate": "2026-07-28",
-      "impact": "medium",
-      "description": "Discuss performance and growth opportunities"
+      "title": "Submit Medical Reimbursement Bills",
+      "dueDate": "2026-07-31",
+      "impact": "high",
+      "description": "Compile and submit all medical expense receipts for reimbursement"
     },
     {
       "id": "3",
-      "title": "Review support metrics dashboard",
-      "dueDate": "2026-07-30",
-      "impact": "high",
-      "description": "Check SLA compliance and identify trends"
+      "title": "Buy Vegetables and Fruits",
+      "dueDate": "2026-07-27",
+      "impact": "low",
+      "description": "Weekly grocery shopping"
     },
     {
       "id": "4",
-      "title": "Email follow-up with prospective hire",
-      "impact": "medium",
-      "description": "Send interview feedback summary"
+      "title": "Prepare Self Evaluation",
+      "dueDate": "2026-08-10",
+      "impact": "high",
+      "description": "Write self-assessment for annual review"
     },
     {
       "id": "5",
-      "title": "Update project documentation",
-      "dueDate": "2026-08-15",
-      "impact": "low",
-      "description": "Add notes from recent architecture discussion"
-    },
-    {
-      "id": "6",
-      "title": "Review team feedback",
+      "title": "Prepare Team Evaluation",
+      "dueDate": "2026-08-10",
       "impact": "high",
-      "dueDate": "2026-07-29"
-    },
-    {
-      "id": "7",
-      "title": "Prepare budget review",
-      "impact": "critical",
-      "dueDate": "2026-07-31",
-      "description": "Q3 budget allocation review"
+      "description": "Complete performance evaluations for team members"
     }
   ]
 }
