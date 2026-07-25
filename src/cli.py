@@ -6,6 +6,8 @@ from pathlib import Path
 from .task_loader import load_tasks, validate_task
 from .prioritizer import prioritize_tasks
 from .claude_analyzer import enrich_tasks_with_analysis, print_enriched_brief
+from .config import get_default_tasks_file, set_default_tasks_file
+from .task_manager import add_task, complete_task, remove_task
 
 
 @click.group()
@@ -17,8 +19,8 @@ def cli():
 @cli.command()
 @click.option(
     "--tasks-file",
-    default="tasks.json",
-    help="Path to JSON file with tasks (default: tasks.json)",
+    default=None,
+    help="Path to JSON file with tasks (uses config default if not specified)",
 )
 @click.option(
     "--top",
@@ -31,9 +33,13 @@ def cli():
     default=True,
     help="Enable/disable Claude AI analysis (default: enabled)",
 )
-def daily_brief(tasks_file: str, top: int, ai: bool):
+def daily_brief(tasks_file, top: int, ai: bool):
     """Show your top priority tasks with optional AI insights."""
     try:
+        # Use config default if tasks_file not specified
+        if tasks_file is None:
+            tasks_file = get_default_tasks_file()
+
         tasks = load_tasks(tasks_file)
 
         # Validate tasks
@@ -104,6 +110,88 @@ def all_tasks(tasks_file: str):
         click.echo(f"Error: '{tasks_file}' is not valid JSON.", err=True)
     except Exception as e:
         click.echo(f"Error: {e}", err=True)
+
+
+@cli.command()
+@click.argument("title")
+@click.option(
+    "--impact",
+    default="medium",
+    type=click.Choice(["low", "medium", "high", "critical"]),
+    help="Impact level (default: medium)",
+)
+@click.option(
+    "--due",
+    default=None,
+    help="Due date in YYYY-MM-DD format",
+)
+@click.option(
+    "--description",
+    default=None,
+    help="Task description",
+)
+@click.option(
+    "--tasks-file",
+    default=None,
+    help="Path to tasks file (uses config default if not specified)",
+)
+def add(title: str, impact: str, due: str, description: str, tasks_file: str):
+    """Add a new task."""
+    if tasks_file is None:
+        tasks_file = get_default_tasks_file()
+
+    if add_task(tasks_file, title, impact=impact, due_date=due, description=description):
+        click.echo(f"✅ Task added: {title}")
+    else:
+        click.echo(f"❌ Failed to add task", err=True)
+
+
+@cli.command()
+@click.argument("task_id")
+@click.option(
+    "--tasks-file",
+    default=None,
+    help="Path to tasks file (uses config default if not specified)",
+)
+def complete(task_id: str, tasks_file: str):
+    """Mark a task as complete (remove it)."""
+    if tasks_file is None:
+        tasks_file = get_default_tasks_file()
+
+    if complete_task(tasks_file, task_id):
+        click.echo(f"✅ Task {task_id} completed!")
+    else:
+        click.echo(f"❌ Failed to complete task {task_id}", err=True)
+
+
+@cli.command()
+@click.argument("task_id")
+@click.option(
+    "--tasks-file",
+    default=None,
+    help="Path to tasks file (uses config default if not specified)",
+)
+def remove(task_id: str, tasks_file: str):
+    """Remove a task."""
+    if tasks_file is None:
+        tasks_file = get_default_tasks_file()
+
+    if remove_task(tasks_file, task_id):
+        click.echo(f"✅ Task {task_id} removed!")
+    else:
+        click.echo(f"❌ Failed to remove task {task_id}", err=True)
+
+
+@cli.command()
+@click.option(
+    "--tasks-file",
+    required=True,
+    help="Path to tasks file to set as default",
+)
+def config_set(tasks_file: str):
+    """Set the default tasks file location."""
+    set_default_tasks_file(tasks_file)
+    click.echo(f"✅ Default tasks file set to: {tasks_file}")
 
 
 if __name__ == "__main__":

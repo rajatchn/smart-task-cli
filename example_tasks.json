@@ -1,13 +1,6 @@
 {
   "tasks": [
     {
-      "id": "1",
-      "title": "Prepare Q3 strategy review",
-      "dueDate": "2026-08-01",
-      "impact": "high",
-      "description": "Compile metrics and narrative for leadership review"
-    },
-    {
       "id": "2",
       "title": "1:1 with Anna",
       "dueDate": "2026-07-28",
@@ -33,6 +26,19 @@
       "dueDate": "2026-08-15",
       "impact": "low",
       "description": "Add notes from recent architecture discussion"
+    },
+    {
+      "id": "6",
+      "title": "Review team feedback",
+      "impact": "high",
+      "dueDate": "2026-07-29"
+    },
+    {
+      "id": "7",
+      "title": "Prepare budget review",
+      "impact": "critical",
+      "dueDate": "2026-07-31",
+      "description": "Q3 budget allocation review"
     }
   ]
 }
